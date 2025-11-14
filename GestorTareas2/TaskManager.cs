@@ -2,36 +2,37 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
-using GestorTareas.Models;
-using GestorTareas.Utils;
+using GestorTareas2.Interfaces;
+using GestorTareas2.Models;
+using GestorTareas2.Utils;
 
 namespace GestorTareas;
 
 public class TaskManager
 {
-    private static readonly string FilePath = Path.Combine(AppContext.BaseDirectory, "tasks.json");
-    private List<WorkTask> _workTasks = new List<WorkTask>();
-
-    public TaskManager()
+    private readonly IWorkTaskRepository _workTaskRepository;
+    public TaskManager(IWorkTaskRepository workTaskRepository)
     {
-        _workTasks = JsonHelper.LoadWorkTask<WorkTask>(FilePath);
+        _workTaskRepository = workTaskRepository;
     }
 
     public void AddWorkTask(string title, string description, Priority priority)
     {
-        int newId = _workTasks.Count > 0 ? _workTasks.Max(t => t.Id) + 1 : 1;
-
         var workTask = new WorkTask()
         {
-            Id = newId,
+            Id = GenerateId(),
             Title = title,
             Description = description,
             Priority = priority
         };
 
-        _workTasks.Add(workTask);
+        _workTaskRepository.Add(workTask);
+    }
 
-        JsonHelper.SaveWorkTask(FilePath, _workTasks);
+    public int GenerateId()
+    {
+        var workTask = _workTaskRepository.GetAll();
+        return workTask.Count == 0 ? 1 : workTask.Max(t => t.Id) + 1;
     }
 
     public void WorkTaskList()
