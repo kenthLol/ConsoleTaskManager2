@@ -1,5 +1,5 @@
 ﻿using GestorTareas;
-using GestorTareas.Models;
+using GestorTareas2.Models;
 
 TaskManager taskManager = new TaskManager();
 
