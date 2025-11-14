@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GestorTareas.Models
+namespace GestorTareas2.Models
 {
     public enum Priority
     {
