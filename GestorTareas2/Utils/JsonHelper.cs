@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
 
-namespace GestorTareas.Utils;
+namespace GestorTareas2.Utils;
 
 public class JsonHelper
 {
