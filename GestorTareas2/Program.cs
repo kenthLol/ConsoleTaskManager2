@@ -1,7 +1,13 @@
-﻿using GestorTareas;
-using GestorTareas2.Models;
+﻿using GestorTareas2.Models;
 
-TaskManager taskManager = new TaskManager();
+using GestorTareas2.Repositories;
+using GestorTareas2.Interfaces;
+using GestorTareas2.Services;
+
+string filePath = Path.Combine(AppContext.BaseDirectory, "tasks.json");
+IWorkTaskRepository workTaskRepository = new JsonTaskRepository(filePath);
+
+TaskManager taskManager = new TaskManager(workTaskRepository);
 
 while (true)
 {
