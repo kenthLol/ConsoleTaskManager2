@@ -40,6 +40,7 @@ namespace GestorTareas2.Repositories
 
         public List<WorkTask> GetAll()
         {
+            // Devolvemos una copia para evitar que la UI manipule la lista directamente
             return _tasks.ToList();
         }
 
