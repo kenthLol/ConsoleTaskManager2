@@ -38,16 +38,17 @@ bin/Debug/net10.0/tasks.json` por defecto). Puedes respaldarlo o editarlo manual
   ## Diagrama de funcionamiento
   ```mermaid
   flowchart LR
-      Program["Program.cs\nInterfaz de consola"] --> TaskManager["TaskManager\n(Lógica de negocio)"]
-      TaskManager --> Models["Modelos\nWorkTask / Priority"]
+      Program["Program.cs: Interfaz de consola"] --> TaskManager["TaskManager (Lógica de negocio)"]
+      TaskManager --> Models["Modelos: WorkTask / Priority"]
       TaskManager --> RepoInterface{"IWorkTaskRepository"}
-      RepoInterface --> JsonRepo["JsonTaskRepository\n(Implementación de persistencia)"]
-      JsonRepo --> JsonHelper["JsonHelper\n(Serializa/Deserializa)"]
-      JsonHelper --> Storage[("tasks.json\nAlmacenamiento local")]
+      RepoInterface --> JsonRepo["JsonTaskRepository (Implementación de persistencia)"]
+      JsonRepo --> JsonHelper["JsonHelper (Serializa/Deserializa)"]
+      JsonHelper --> Storage[("tasks.json: Almacenamiento local")]
   ```
 
   El diagrama muestra cómo la aplicación de consola orquesta las operaciones: la interfaz de usuario (`Program.cs`) delega
  la lógica al servicio `TaskManager`, el cual utiliza los modelos para manipular datos y se comunica exclusivamente mediante la
 interfaz `IWorkTaskRepository`. La implementación `JsonTaskRepository` delega la persistencia en `JsonHelper`, que lee y escribe
  el archivo `tasks.json` donde se guardan las tareas.
+
 
