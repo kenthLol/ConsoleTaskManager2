@@ -53,7 +53,7 @@ while (true)
                 Console.WriteLine("El titulo y la descripcion no pueden estar vacios");
             }
 
-            taskManager.CleanScreen();
+            CleanScreen();
             break;
         case "2":
             List<WorkTask> results = taskManager.WorkTaskList();
@@ -71,7 +71,7 @@ while (true)
                 }
             }
 
-            taskManager.CleanScreen();
+            CleanScreen();
             break;
         case "3":
             Console.WriteLine("Id de la tarea a completar: ");
@@ -88,7 +88,7 @@ while (true)
                 }
             }
 
-            taskManager.CleanScreen();
+            CleanScreen();
             break;
         case "4":
             Console.WriteLine("Id de la tarea a eliminar: ");
@@ -105,7 +105,7 @@ while (true)
                 }
             }
 
-            taskManager.CleanScreen();
+            CleanScreen();
             break;
         case "5":
             Console.WriteLine("Buscar (Titulo o Descripcion): ");
@@ -114,7 +114,7 @@ while (true)
             if(string.IsNullOrWhiteSpace(text))
             {
                 Console.WriteLine("Debe de ingresar un texto válido");
-                taskManager.CleanScreen();
+                CleanScreen();
                 break;
             }
 
@@ -133,7 +133,7 @@ while (true)
                 }
             }
 
-            taskManager.CleanScreen();
+            CleanScreen();
             break;
 
         case "6":
@@ -159,18 +159,25 @@ while (true)
                 }
             }
 
-                taskManager.CleanScreen();
+                CleanScreen();
             break;
         case "7":
             Console.WriteLine("Hasta luego!");
 
-            taskManager.CleanScreen();
+            CleanScreen();
             return;
         default:
             Console.WriteLine("Opción inválida.");
 
-            taskManager.CleanScreen();
+            CleanScreen();
             break;
 
     }
+}
+
+static void CleanScreen()
+{
+    Console.Write("Ingrese una tecla para continuar...");
+    Console.ReadLine();
+    Console.Clear();
 }
