@@ -3,6 +3,7 @@
 using GestorTareas2.Repositories;
 using GestorTareas2.Interfaces;
 using GestorTareas2.Services;
+using System.Reflection;
 
 string filePath = Path.Combine(AppContext.BaseDirectory, "tasks.json");
 IWorkTaskRepository workTaskRepository = new JsonTaskRepository(filePath);
@@ -55,7 +56,21 @@ while (true)
             taskManager.CleanScreen();
             break;
         case "2":
-            taskManager.WorkTaskList();
+            List<WorkTask> results = taskManager.WorkTaskList();
+
+            if (results.Count == 0)
+            {
+                Console.WriteLine("No hay tareas registradas");
+            }
+            else
+            {
+                foreach (WorkTask task in results)
+                {
+                    string state = task.IsCompleted ? "Completada" : "Pendiente";
+                    Console.WriteLine($"{task.Id}. {task.Title} - {state}");
+                }
+            }
+
             taskManager.CleanScreen();
             break;
         case "3":
@@ -63,7 +78,14 @@ while (true)
 
             if (int.TryParse(Console.ReadLine(), out int idCompletar))
             {
-                taskManager.CompleteWorkTask(idCompletar);
+                if(!taskManager.CompleteWorkTask(idCompletar))
+                {
+                    Console.WriteLine("Tarea no encontrada");
+                }
+                else
+                {
+                    Console.WriteLine("Tarea completada");
+                }
             }
 
             taskManager.CleanScreen();
@@ -73,7 +95,14 @@ while (true)
 
             if (int.TryParse(Console.ReadLine(), out int idEliminar))
             {
-                taskManager.DeleteWorkTask(idEliminar);
+                if(!taskManager.DeleteWorkTask(idEliminar))
+                {
+                    Console.WriteLine("Tarea no encontrada");
+                }
+                else
+                {
+                    Console.WriteLine("Tarea eliminada exitosamente");
+                }
             }
 
             taskManager.CleanScreen();
@@ -81,7 +110,28 @@ while (true)
         case "5":
             Console.WriteLine("Buscar (Titulo o Descripcion): ");
             string text = Console.ReadLine() ?? string.Empty;
-            taskManager.SearchWorkTask(text);
+
+            if(string.IsNullOrWhiteSpace(text))
+            {
+                Console.WriteLine("Debe de ingresar un texto válido");
+                taskManager.CleanScreen();
+                break;
+            }
+
+            List<WorkTask> workTaskFound = taskManager.SearchWorkTask(text);
+
+            if (workTaskFound.Count == 0)
+            {
+                Console.WriteLine("No se encontraron tareas que coincidan con el texto proporcionado");
+            }
+            else
+            {
+                foreach(WorkTask task in workTaskFound)
+                {
+                    string state = task.IsCompleted ? "Completada" : "Pendiente";
+                    Console.WriteLine($"{task.Id}. {task.Title} - {state}");
+                }
+            }
 
             taskManager.CleanScreen();
             break;
@@ -95,9 +145,21 @@ while (true)
                 priority = (int)Priority.Media;
             }
 
-            taskManager.FilterWorkTasksByPriority((Priority)priority);
+            List<WorkTask> taskWithPriorityFound = taskManager.FilterWorkTasksByPriority((Priority)priority);
 
-            taskManager.CleanScreen();
+            if(taskWithPriorityFound.Count == 0)
+            {
+                Console.WriteLine("No hay tareas con esa prioridad");
+            }
+            else
+            {
+                foreach(WorkTask task in taskWithPriorityFound)
+                {
+                    Console.WriteLine($"{task.Id} - {task.Title} - {task.Priority}");
+                }
+            }
+
+                taskManager.CleanScreen();
             break;
         case "7":
             Console.WriteLine("Hasta luego!");
