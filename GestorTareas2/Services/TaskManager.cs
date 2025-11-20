@@ -97,11 +97,4 @@ public class TaskManager
 
         return filteredTasks;
     }
-
-    public void CleanScreen()
-    {
-        Console.Write("Ingrese una tecla para continuar...");
-        Console.ReadLine();
-        Console.Clear();
-    }
 }
