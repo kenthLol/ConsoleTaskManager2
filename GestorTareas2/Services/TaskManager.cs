@@ -36,59 +36,49 @@ public class TaskManager
         return workTask.Count == 0 ? 1 : workTask.Max(t => t.Id) + 1;
     }
 
-    public void WorkTaskList()
+    public List<WorkTask> WorkTaskList()
     {
         var workTask = _workTaskRepository.GetAll();
 
-        if (workTask.Count == 0)
+        if (workTask == null)
         {
-            Console.WriteLine("No hay tareas registradas.");
-            return;
+            return new List<WorkTask>();
         }
 
-        foreach (var Task in workTask)
-        {
-            string state = Task.IsCompleted ? "Completada" : "Pendiente";
-            Console.WriteLine($"{Task.Id}. {Task.Title} - {state}");
-        }
+        return workTask;
     }
 
-    public void CompleteWorkTask(int id)
+    public bool CompleteWorkTask(int id)
     {
         var workTask = _workTaskRepository.GetById(id);
 
         if (workTask == null)
         {
-            Console.WriteLine("Tarea no encontrada");
-
-            return;
+            return false;
         }
 
         workTask.IsCompleted = true;
         _workTaskRepository.Update(workTask);
+
+        return true;
     }
 
-    public void DeleteWorkTask(int id)
+    public bool DeleteWorkTask(int id)
     {
         var workTask = _workTaskRepository.GetById(id);
 
         if (workTask == null)
         {
-            Console.WriteLine("Tarea no encontrada");
-            return;
+            return false;
         }
 
         _workTaskRepository.Delete(id);
+
+        return true;
     }
 
-    public void SearchWorkTask(string text)
+    public List<WorkTask> SearchWorkTask(string text)
     {
-        if (string.IsNullOrWhiteSpace(text))
-        {
-            Console.WriteLine("Debe ingresar un texto válido");
-            return;
-        }
-
         var foundWorkTask = _workTaskRepository.GetAll()
             .Where(wt =>
                 (wt.Title?.Contains(text, StringComparison.OrdinalIgnoreCase) ?? false) ||
@@ -96,35 +86,16 @@ public class TaskManager
             )
             .ToList();
 
-        if (foundWorkTask.Count == 0)
-        {
-            Console.WriteLine("No se encontraron tareas que coincidan con el texto proporcionado.");
-            return;
-        }
-
-        foreach (var workTask in foundWorkTask)
-        {
-            string state = workTask.IsCompleted ? "Completada" : "Pendiente";
-            Console.WriteLine($"{workTask.Id}. {workTask.Title} - {state}");
-        }
+        return foundWorkTask;
     }
 
-    public void FilterWorkTasksByPriority(Priority priority)
+    public List<WorkTask> FilterWorkTasksByPriority(Priority priority)
     {
         var filteredTasks = _workTaskRepository.GetAll()
             .Where(t => t.Priority == priority)
             .ToList();
 
-        if (filteredTasks.Count == 0)
-        {
-            Console.WriteLine("No hay tareas con esa prioridad");
-            return;
-        }
-
-        foreach (var workTask in filteredTasks)
-        {
-            Console.WriteLine($"{workTask.Id} - {workTask.Title} - {workTask.Priority}");
-        }
+        return filteredTasks;
     }
 
     public void CleanScreen()
