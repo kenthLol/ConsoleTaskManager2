@@ -56,7 +56,7 @@ while (true)
             CleanScreen();
             break;
         case "2":
-            List<WorkTask> results = taskManager.WorkTaskList();
+            List<WorkTask> results = taskManager.GetAllWorkTaskList();
 
             if (results.Count == 0)
             {
