@@ -36,14 +36,9 @@ public class TaskManager
         return workTask.Count == 0 ? 1 : workTask.Max(t => t.Id) + 1;
     }
 
-    public List<WorkTask> WorkTaskList()
+    public List<WorkTask> GetAllWorkTaskList()
     {
         var workTask = _workTaskRepository.GetAll();
-
-        if (workTask == null)
-        {
-            return new List<WorkTask>();
-        }
 
         return workTask;
     }
