@@ -36,16 +36,16 @@ while (true)
             string? description = Console.ReadLine();
 
             Console.Write("Prioridad (1-Baja, 2-Media, 3-Alta): ");
-            string? priorityStr = Console.ReadLine();
+            string? priorityValue = Console.ReadLine();
 
-            if (!int.TryParse(priorityStr, out int priorityInput) || !Enum.IsDefined(typeof(Priority), priorityInput))
+            if (!int.TryParse(priorityValue, out int priority) || !Enum.IsDefined(typeof(Priority), priority))
             {
-                priorityInput = (int)Priority.Media;
+                priority = (int)Priority.Media;
             }
 
             if (!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(description))
             {
-                taskManager.AddWorkTask(title, description, (Priority)priorityInput);
+                taskManager.AddWorkTask(title, description, (Priority)priority);
                 Console.WriteLine("Tarea asignada correctamente.");
             }
             else
@@ -138,14 +138,14 @@ while (true)
 
         case "6":
             Console.WriteLine("Buscar por Prioridad (1.Baja, 2.Media, 3.Alta): ");
-            string? priorityStrSort = Console.ReadLine();
+            string? selectedPriority = Console.ReadLine();
 
-            if (!int.TryParse(priorityStrSort, out int priority) || !Enum.IsDefined(typeof(Priority), priority))
+            if (!int.TryParse(selectedPriority, out int priorityOption) || !Enum.IsDefined(typeof(Priority), priorityOption))
             {
                 priority = (int)Priority.Media;
             }
 
-            List<WorkTask> taskWithPriorityFound = taskManager.FilterWorkTasksByPriority((Priority)priority);
+            List<WorkTask> taskWithPriorityFound = taskManager.FilterWorkTasksByPriority((Priority)priorityOption);
 
             if(taskWithPriorityFound.Count == 0)
             {
