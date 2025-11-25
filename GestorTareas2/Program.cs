@@ -1,9 +1,9 @@
-﻿using GestorTareas2.Models;
-
+﻿using GestorTareas2.Interfaces;
+using GestorTareas2.Models;
 using GestorTareas2.Repositories;
-using GestorTareas2.Interfaces;
 using GestorTareas2.Services;
 using System.Reflection;
+using System.Threading.Tasks;
 
 string filePath = Path.Combine(AppContext.BaseDirectory, "tasks.json");
 IWorkTaskRepository workTaskRepository = new JsonTaskRepository(filePath);
@@ -19,7 +19,9 @@ while (true)
     Console.WriteLine("4. Eliminar tarea");
     Console.WriteLine("5. Buscar tarea");
     Console.WriteLine("6. Filtrar tareas por prioridad");
-    Console.WriteLine("7. Salir");
+    Console.WriteLine("7. Obtener tareas ordenadas");
+    Console.WriteLine("8. Hay tarea urgente?");
+    Console.WriteLine("9. Salir");
     Console.Write("Selecciona una opción: ");
 
     string? input = Console.ReadLine();
@@ -159,9 +161,41 @@ while (true)
                 }
             }
 
-                CleanScreen();
+            CleanScreen();
             break;
         case "7":
+            List<WorkTask> workTaskOrdered = taskManager.GetWorkTaskOrdered();
+
+            if(workTaskOrdered.Count == 0)
+            {
+                Console.WriteLine("No hay tareas");
+            }
+            else
+            {
+                Console.WriteLine("Las tareas se muestran según su prioridad en orden descendente");
+
+                foreach (var workTask in workTaskOrdered)
+                {
+                    string state = workTask.IsCompleted ? "Completada" : "Pendiente";
+                    Console.WriteLine($"{workTask.Id} - {workTask.Title} - {workTask.Priority}: {state}");
+                }
+            }
+            CleanScreen();
+            break;
+        case "8":
+            bool urgentWorkTask = taskManager.HasUrgentWorkTask();
+
+            if (!urgentWorkTask)
+            {
+                Console.WriteLine("No hay tareas urgentes");
+            }
+            else
+            {
+                Console.WriteLine("Hay tareas urgentes");
+            }
+            CleanScreen();
+            break;
+        case "9":
             Console.WriteLine("Hasta luego!");
 
             CleanScreen();
