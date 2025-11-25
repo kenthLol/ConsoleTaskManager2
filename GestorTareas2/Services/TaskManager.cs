@@ -92,4 +92,58 @@ public class TaskManager
 
         return filteredTasks;
     }
+
+    public List<WorkTask> GetWorkTaskOrdered()
+    {
+        var workTask = _workTaskRepository.GetAll();
+
+        var workTaskOrdered = workTask
+            .OrderByDescending(t => t.Priority)
+            .ThenBy(t => !t.IsCompleted)
+            .ThenBy(t => t.Title)
+            .ToList();
+
+        return workTaskOrdered;
+    }
+
+    public List<string> GetWorkTaskTitles()
+    {
+        var workTaskTitle = _workTaskRepository.GetAll()
+            .Select(t => t.Title)
+            .ToList();
+
+        return workTaskTitle;
+    }
+
+    public bool HasUrgentWorkTask()
+    {
+        bool urgentWorkTask = _workTaskRepository.GetAll()
+            .Any(t => t.Priority == Priority.Alta && !t.IsCompleted);
+
+        return urgentWorkTask;
+    }
+
+    public List<WorkTask> GetLatestWorkTask()
+    {
+        var latestWorkTask = _workTaskRepository.GetAll()
+            .OrderByDescending(t => t.CreationDate)
+            .Take(3)
+            .ToList();
+
+        return latestWorkTask;
+    }
+
+    public List<object> GetWorkTaskSummary()
+    {
+        var summary = _workTaskRepository.GetAll()
+            .Select(t => new {
+                t.Id,
+                t.Title,
+                State = t.IsCompleted ? "Completado" : "Incompleto"
+            })
+            .Cast<object>()
+            .ToList();
+
+        return summary;
+    }
 }
