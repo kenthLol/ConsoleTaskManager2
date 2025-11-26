@@ -10,6 +10,13 @@ IWorkTaskRepository workTaskRepository = new JsonTaskRepository(filePath);
 
 TaskManager taskManager = new TaskManager(workTaskRepository);
 
+//Definir los anchos de las columnas para el formato de tabla
+const int IdWidth = 4;
+const int TitleWidth = 25;
+const int StateWidth = 12;
+const int PriorityWidth = 10;
+const int DescriptionWidth = 40;
+
 while (true)
 {
     Console.WriteLine("\n--- GESTOR DE TAREAS ---");
@@ -21,7 +28,8 @@ while (true)
     Console.WriteLine("6. Filtrar tareas por prioridad");
     Console.WriteLine("7. Obtener tareas ordenadas");
     Console.WriteLine("8. Hay tarea urgente?");
-    Console.WriteLine("9. Salir");
+    Console.WriteLine("9. Cuantas tareas hay por prioridad?");
+    Console.WriteLine("10. Salir");
     Console.Write("Selecciona una opción: ");
 
     string? input = Console.ReadLine();
@@ -66,11 +74,46 @@ while (true)
             }
             else
             {
+                Console.WriteLine("\n--- LISTA DE TAREAS PENDIENTES Y COMPLETADAS ---");
+
+                // Definir la línea de separación
+                string separator = new string('-', IdWidth + TitleWidth + StateWidth + PriorityWidth + DescriptionWidth + 8); // +8 para los espacios entre columnas
+                Console.WriteLine(separator);
+
+                // Formato del encabezado usando alineación a la izquierda (-) y los anchos definidos
+                Console.WriteLine(
+                    $"{"ID",-IdWidth} | " +
+                    $"{"TÍTULO",-TitleWidth} | " +
+                    $"{"ESTADO",-StateWidth} | " +
+                    $"{"PRIORIDAD",-PriorityWidth} | " +
+                    $"{"DESCRIPCIÓN",-DescriptionWidth}"
+                );
+
+                Console.WriteLine(separator);
+
                 foreach (WorkTask task in results)
                 {
                     string state = task.IsCompleted ? "Completada" : "Pendiente";
-                    Console.WriteLine($"{task.Id}. {task.Title} - {state}");
+                    string priorityName = task.Priority.ToString();
+
+                    // Si la descripción es demasiado larga, truncarla para que encaje en la columna
+                    string taskDescription = task.Description;
+                    if (taskDescription.Length > DescriptionWidth)
+                    {
+                        taskDescription = taskDescription.Substring(0, DescriptionWidth - 3) + "...";
+                    }
+
+                    // Formato de la línea de datos usando los anchos definidos
+                    Console.WriteLine(
+                        $"{task.Id,-IdWidth} | " +
+                        $"{task.Title,-TitleWidth} | " +
+                        $"{state,-StateWidth} | " +
+                        $"{priorityName,-PriorityWidth} | " +
+                        $"{taskDescription,-DescriptionWidth}"
+                    );
                 }
+
+                Console.WriteLine(separator);
             }
 
             CleanScreen();
@@ -196,6 +239,24 @@ while (true)
             CleanScreen();
             break;
         case "9":
+            Dictionary<Priority, int> result = taskManager.GetTasksCountByPriority();
+
+            if(result.Count > 0)
+            {
+                Console.WriteLine("Cantidad de tareas por prioridad: ");
+                foreach (var workTask in result)
+                {
+                    Console.WriteLine($"{workTask.Key} => {workTask.Value}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No hay tareas");
+            }
+
+            CleanScreen();
+            break;
+        case "10":
             Console.WriteLine("Hasta luego!");
 
             CleanScreen();
