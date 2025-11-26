@@ -146,4 +146,28 @@ public class TaskManager
 
         return summary;
     }
+
+    public Dictionary<Priority, int> GetTasksCountByPriority()
+    {
+        Dictionary<Priority, int> workTasks = _workTaskRepository.GetAll()
+            .GroupBy(t => t.Priority)
+            .ToDictionary(t => t.Key, t => t.Count());
+
+        return workTasks;
+    }
+
+    public Dictionary<string, int> GetTasksCountByState()
+    {
+        var workTasks = _workTaskRepository.GetAll()
+            .GroupBy(t => t.IsCompleted)
+            .ToDictionary(t => t.Key, t => t.Count());
+
+        Dictionary<string, int> result = new()
+        {
+            { "Completadas", workTasks.GetValueOrDefault(true, 0) },
+            { "Pendientes", workTasks.GetValueOrDefault(false, 0) }
+        };
+
+        return result;
+    }
 }
