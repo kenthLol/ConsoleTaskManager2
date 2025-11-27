@@ -162,12 +162,57 @@ public class TaskManager
             .GroupBy(t => t.IsCompleted)
             .ToDictionary(t => t.Key, t => t.Count());
 
-        Dictionary<string, int> result = new()
+        Dictionary<string, int> countsByState = new()
         {
             { "Completadas", workTasks.GetValueOrDefault(true, 0) },
             { "Pendientes", workTasks.GetValueOrDefault(false, 0) }
         };
 
-        return result;
+        return countsByState;
+    }
+
+    public Dictionary<DateTime, List<WorkTask>> GetTasksGroupedByDate()
+    {
+        var workTasks = _workTaskRepository.GetAll()
+            .GroupBy(t => t.CreationDate.Date);
+
+        return workTasks
+            .ToDictionary(t => t.Key, t => t.ToList());
+    }
+
+    public object GetDashboardStats()
+    {
+        List<WorkTask> workTasks = _workTaskRepository.GetAll();
+
+        int totalWorkTasks = workTasks.Count();
+
+        Dictionary<bool, int> PendingAndCompleted = workTasks
+            .GroupBy(t => t.IsCompleted)
+            .ToDictionary(t => t.Key, t => t.Count());
+
+        Dictionary<string, int> totalPendingAndCompleted = new()
+        {
+            { "Completadas", PendingAndCompleted.GetValueOrDefault(true, 0)},
+            { "Pendientes", PendingAndCompleted.GetValueOrDefault(false, 0)}
+        };
+
+        double percentageCompleted = 0;
+        if (totalWorkTasks != 0)
+        {
+            double result = (double)totalPendingAndCompleted["Completadas"] / totalWorkTasks * 100;
+            percentageCompleted = Math.Round(result, 2);
+        }
+        else
+        {
+            percentageCompleted = 0;
+        }
+
+        return new
+        {
+            Total = totalWorkTasks,
+            Completadas = totalPendingAndCompleted["Completadas"],
+            Pendientes = totalPendingAndCompleted["Pendientes"],
+            PorcentajeCompletadas = percentageCompleted
+        };
     }
 }
