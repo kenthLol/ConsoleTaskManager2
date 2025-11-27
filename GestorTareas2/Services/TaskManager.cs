@@ -95,32 +95,30 @@ public class TaskManager
 
     public List<WorkTask> GetWorkTaskOrdered()
     {
-        var workTask = _workTaskRepository.GetAll();
-
-        var workTaskOrdered = workTask
+        return _workTaskRepository
+            .GetAll()
             .OrderByDescending(t => t.Priority)
             .ThenBy(t => !t.IsCompleted)
             .ThenBy(t => t.Title)
             .ToList();
-
-        return workTaskOrdered;
     }
 
     public List<string> GetWorkTaskTitles()
     {
-        var workTaskTitle = _workTaskRepository.GetAll()
+        return _workTaskRepository
+            .GetAll()
             .Select(t => t.Title)
             .ToList();
-
-        return workTaskTitle;
     }
 
     public bool HasUrgentWorkTask()
     {
-        bool urgentWorkTask = _workTaskRepository.GetAll()
-            .Any(t => t.Priority == Priority.Alta && !t.IsCompleted);
-
-        return urgentWorkTask;
+        return _workTaskRepository
+            .GetAll()
+            .Any(t =>
+                t.Priority == Priority.Alta &&
+                !t.IsCompleted
+            );
     }
 
     public List<WorkTask> GetLatestWorkTask()
