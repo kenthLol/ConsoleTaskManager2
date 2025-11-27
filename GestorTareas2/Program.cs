@@ -29,7 +29,9 @@ while (true)
     Console.WriteLine("7. Obtener tareas ordenadas");
     Console.WriteLine("8. Hay tarea urgente?");
     Console.WriteLine("9. Cuantas tareas hay por prioridad?");
-    Console.WriteLine("10. Salir");
+    Console.WriteLine("10. Cantidad de tareas por fechas");
+    Console.WriteLine("11. Obtener estadisticas globales");
+    Console.WriteLine("12. Salir");
     Console.Write("Selecciona una opción: ");
 
     string? input = Console.ReadLine();
@@ -257,6 +259,43 @@ while (true)
             CleanScreen();
             break;
         case "10":
+            Dictionary<DateTime, List<WorkTask>> tasksGroupedByDate = taskManager.GetTasksGroupedByDate();
+
+            if (tasksGroupedByDate.Count > 0)
+            {
+                Console.WriteLine("Cantidad de tareas por fechas: ");
+                foreach (var workTask in tasksGroupedByDate)
+                {
+                    Console.WriteLine($"{workTask.Key} => {workTask.Value.Count()} tareas");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No hay tareas");
+            }
+
+            CleanScreen();
+            break;
+        case "11":
+            dynamic dashboardStats = taskManager.GetDashboardStats();
+
+            if (dashboardStats != null)
+            {
+                Console.WriteLine("Estadisticas globales: ");
+                Console.WriteLine($"Total: {dashboardStats.Total} \n" +
+                    $"Completadas: {dashboardStats.Completadas} \n" +
+                    $"Pendientes: {dashboardStats.Pendientes} \n" +
+                    $"PorcentajeCompletadas: {dashboardStats.PorcentajeCompletadas}%"
+                );
+            }
+            else
+            {
+                Console.WriteLine("Sin registros");
+            }
+
+            CleanScreen();
+            break;
+        case "12":
             Console.WriteLine("Hasta luego!");
 
             CleanScreen();
