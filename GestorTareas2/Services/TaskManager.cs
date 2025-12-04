@@ -93,7 +93,7 @@ public class TaskManager
         return filteredTasks;
     }
 
-    public List<WorkTask> GetWorkTaskOrdered()
+    public List<WorkTask> GetTaskOrdered()
     {
         return _workTaskRepository
             .GetAll()
@@ -103,15 +103,16 @@ public class TaskManager
             .ToList();
     }
 
-    public List<string> GetWorkTaskTitles()
+    public List<string> GetTaskTitles()
     {
         return _workTaskRepository
             .GetAll()
             .Select(t => t.Title)
+            .Where(title => title != null)
             .ToList();
     }
 
-    public bool HasUrgentWorkTask()
+    public bool HasUrgentTasks()
     {
         return _workTaskRepository
             .GetAll()
@@ -121,17 +122,15 @@ public class TaskManager
             );
     }
 
-    public List<WorkTask> GetLatestWorkTask()
+    public List<WorkTask> GetLatestTask()
     {
-        var latestWorkTask = _workTaskRepository.GetAll()
+        return _workTaskRepository.GetAll()
             .OrderByDescending(t => t.CreationDate)
             .Take(3)
             .ToList();
-
-        return latestWorkTask;
     }
 
-    public List<object> GetWorkTaskSummary()
+    public List<object> GetTaskSummary()
     {
         var summary = _workTaskRepository.GetAll()
             .Select(t => new {
@@ -171,46 +170,37 @@ public class TaskManager
 
     public Dictionary<DateTime, List<WorkTask>> GetTasksGroupedByDate()
     {
-        var workTasks = _workTaskRepository.GetAll()
-            .GroupBy(t => t.CreationDate.Date);
 
-        return workTasks
+        return _workTaskRepository.GetAll()
+            .GroupBy(t => t.CreationDate.Date)
+            .OrderBy(t => t.Key)
             .ToDictionary(t => t.Key, t => t.ToList());
     }
 
     public object GetDashboardStats()
     {
-        List<WorkTask> workTasks = _workTaskRepository.GetAll();
+        List<WorkTask> allTasks = _workTaskRepository.GetAll();
 
-        int totalWorkTasks = workTasks.Count();
+        var completionStats = allTasks
+            .GroupBy(task => task.IsCompleted)
+            .ToDictionary(
+                group => group.Key, 
+                group => group.Count()
+            );
 
-        Dictionary<bool, int> PendingAndCompleted = workTasks
-            .GroupBy(t => t.IsCompleted)
-            .ToDictionary(t => t.Key, t => t.Count());
+        int totalCompleted = completionStats.GetValueOrDefault(true, 0);
+        int totalPending = completionStats.GetValueOrDefault(false, 0);
+        int totalTasks = totalCompleted + totalPending;
 
-        Dictionary<string, int> totalPendingAndCompleted = new()
-        {
-            { "Completadas", PendingAndCompleted.GetValueOrDefault(true, 0)},
-            { "Pendientes", PendingAndCompleted.GetValueOrDefault(false, 0)}
-        };
-
-        double percentageCompleted = 0;
-        if (totalWorkTasks != 0)
-        {
-            double result = (double)totalPendingAndCompleted["Completadas"] / totalWorkTasks * 100;
-            percentageCompleted = Math.Round(result, 2);
-        }
-        else
-        {
-            percentageCompleted = 0;
-        }
+        double completionPercentage = (totalTasks != 0)
+            ? Math.Round(((double)totalCompleted / totalTasks) * 100, 2) : 0.0;
 
         return new
         {
-            Total = totalWorkTasks,
-            Completadas = totalPendingAndCompleted["Completadas"],
-            Pendientes = totalPendingAndCompleted["Pendientes"],
-            PorcentajeCompletadas = percentageCompleted
+            TotalTareas = totalTasks,
+            Completadas = totalCompleted,
+            Pendientes = totalPending,
+            PorcentajeCompletadas = completionPercentage
         };
     }
 }
