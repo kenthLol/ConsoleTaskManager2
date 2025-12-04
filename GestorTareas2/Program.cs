@@ -209,7 +209,7 @@ while (true)
             CleanScreen();
             break;
         case "7":
-            List<WorkTask> workTaskOrdered = taskManager.GetWorkTaskOrdered();
+            List<WorkTask> workTaskOrdered = taskManager.GetTaskOrdered();
 
             if(workTaskOrdered.Count == 0)
             {
@@ -228,7 +228,7 @@ while (true)
             CleanScreen();
             break;
         case "8":
-            bool urgentWorkTask = taskManager.HasUrgentWorkTask();
+            bool urgentWorkTask = taskManager.HasUrgentTasks();
 
             if (!urgentWorkTask)
             {
@@ -282,7 +282,7 @@ while (true)
             if (dashboardStats != null)
             {
                 Console.WriteLine("Estadisticas globales: ");
-                Console.WriteLine($"Total: {dashboardStats.Total} \n" +
+                Console.WriteLine($"Total: {dashboardStats.TotalTareas} \n" +
                     $"Completadas: {dashboardStats.Completadas} \n" +
                     $"Pendientes: {dashboardStats.Pendientes} \n" +
                     $"PorcentajeCompletadas: {dashboardStats.PorcentajeCompletadas}%"
