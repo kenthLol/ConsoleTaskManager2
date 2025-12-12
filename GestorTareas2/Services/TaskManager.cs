@@ -5,6 +5,7 @@ using System.Text.Json;
 using GestorTareas2.Interfaces;
 using GestorTareas2.Models;
 using GestorTareas2.Utils;
+using GestorTareas2.Extensions;
 
 namespace GestorTareas2.Services;
 
@@ -75,10 +76,7 @@ public class TaskManager
     public List<WorkTask> SearchWorkTask(string text)
     {
         var foundWorkTask = _workTaskRepository.GetAll()
-            .Where(wt =>
-                (wt.Title?.Contains(text, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                (wt.Description?.Contains(text, StringComparison.OrdinalIgnoreCase) ?? false)
-            )
+            .Search(text)
             .ToList();
 
         return foundWorkTask;
@@ -98,8 +96,8 @@ public class TaskManager
         return _workTaskRepository
             .GetAll()
             .OrderByDescending(t => t.Priority)
-            .ThenBy(t => !t.IsCompleted)
             .ThenBy(t => t.Title)
+            .Pending()
             .ToList();
     }
 
