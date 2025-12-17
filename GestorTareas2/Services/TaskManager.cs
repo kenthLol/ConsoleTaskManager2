@@ -85,7 +85,7 @@ public class TaskManager
     public List<WorkTask> FilterWorkTasksByPriority(Priority priority)
     {
         var filteredTasks = _workTaskRepository.GetAll()
-            .Where(t => t.Priority == priority)
+            .ByPriority(priority)
             .ToList();
 
         return filteredTasks;
@@ -124,7 +124,7 @@ public class TaskManager
     {
         return _workTaskRepository.GetAll()
             .OrderByDescending(t => t.CreationDate)
-            .Take(3)
+            .Latest(3)
             .ToList();
     }
 
