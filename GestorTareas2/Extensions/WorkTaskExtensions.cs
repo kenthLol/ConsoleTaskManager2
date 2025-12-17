@@ -1,12 +1,8 @@
 ﻿using GestorTareas2.Models;
-using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Text;
 
 namespace GestorTareas2.Extensions
 {
-    static class WorkTaskExtensions
+    public static class WorkTaskExtensions
     {
         public static IEnumerable<WorkTask> Pending(this IEnumerable<WorkTask> tasks)
         {
