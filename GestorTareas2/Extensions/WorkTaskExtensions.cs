@@ -20,5 +20,15 @@ namespace GestorTareas2.Extensions
                     (wt.Description?.Contains(text, StringComparison.OrdinalIgnoreCase) ?? false)
             );
         }
+
+        public static IEnumerable<WorkTask> ByPriority(this IEnumerable<WorkTask> tasks, Priority priority)
+        {
+            return tasks.Where(t => t.Priority == priority);
+        }
+
+        public static IEnumerable<WorkTask> Latest(this IEnumerable<WorkTask> tasks, int count)
+        {
+            return tasks.Take(count);
+        }
     }
 }
