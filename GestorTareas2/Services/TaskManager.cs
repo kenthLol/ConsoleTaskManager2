@@ -97,7 +97,6 @@ public class TaskManager
             .GetAll()
             .OrderByDescending(t => t.Priority)
             .ThenBy(t => t.Title)
-            .Pending()
             .ToList();
     }
 
